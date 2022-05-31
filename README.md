@@ -40,6 +40,10 @@ YARA is multi-platform, running on Windows, Linux and Mac OS X, and can be used
 through its command-line interface or from your own Python scripts with the
 yara-python extension.
 
+##### KW: Modified for https://github.com/kweatherman/yara4ida
+
+##### See "KW_MODIFICATIONS.md" for list of changes.
+
 ## Additional resources
 
 Do you use GitHub for storing your YARA rules? [YARA-CI](https://yara-ci.cloud.virustotal.com)

@@ -141,6 +141,10 @@ endif
 # MODULES += libyara/modules/yourmodule.c
 #
 
+if AREA_MODULE
+MODULES += modules/area/area.c
+endif
+
 include_HEADERS = libyara/include/yara.h
 
 yaraincludedir = $(includedir)/yara

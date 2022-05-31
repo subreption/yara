@@ -513,7 +513,8 @@ YR_API char* yr_compiler_get_current_file_name(YR_COMPILER* compiler)
   }
 }
 
-static int _yr_compiler_set_namespace(
+// KW: Removed static so it can be called externally from libyara\lexer.c
+/*static*/ int _yr_compiler_set_namespace(
     YR_COMPILER* compiler,
     const char* namespace_)
 {

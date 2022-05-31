@@ -1707,6 +1707,10 @@ YY_RULE_SETUP
       }
     }
 
+    // KW: Make the current namespace equal the include file path to relate rule matches to their source file
+    extern int _yr_compiler_set_namespace(YR_COMPILER *compiler, const char *namespace_);
+    FAIL_ON_ERROR(_yr_compiler_set_namespace(compiler, include_path));
+
     YR_NAMESPACE* ns = (YR_NAMESPACE*) yr_arena_get_ptr(
         compiler->arena,
         YR_NAMESPACES_TABLE,
