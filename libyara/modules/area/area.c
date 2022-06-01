@@ -18,9 +18,22 @@
     return (int) _error;                                                   \
   }
 
-// To track the Yara scan buffer
-static uint8_t *scan_data = NULL;
-static size_t scan_size = 0;
+// Output formated text to debugger channel
+#if 0
+void trace(const char *format, ...)
+{
+  if (format)
+  {
+    va_list vl;
+    // The OS buffer for these messages is a page/4096 size max
+    char buffer[4096];
+    va_start(vl, format);
+    vsnprintf_s(buffer, sizeof(buffer), sizeof(buffer) - 1, format, vl);
+    va_end(vl);
+    OutputDebugString(buffer);
+  }
+}
+#endif
 
 /*
 Method: Look for a series of 32bit or 64bit values within a specified +-range of the first value in the series.
@@ -61,6 +74,12 @@ define_function(scan)
 {    
     uint64_t *matches = NULL;
 
+    // Get current scan buffer
+    YR_MEMORY_BLOCK *block = first_memory_block(__context);
+    const uint8_t *scan_data = block->fetch_data(block);
+    size_t scan_size = block->size;    
+    //trace("scan(%04X): 0x%llX, %u\n", GetCurrentThreadId(), (UINT64) scan_data, scan_size);
+   
     #ifdef _WIN32
 	__try
     #endif
@@ -186,6 +205,7 @@ define_function(scan)
     #ifdef _WIN32
 	__except (TRUE) 
     {
+        //trace("** scan() exception! **\n");
 		yr_free(matches);
 		matches = NULL;
 		return_integer_error(ERROR_INTERNAL_FATAL_ERROR);
@@ -211,22 +231,10 @@ int module_finalize(YR_MODULE *module)
 
 int module_load(YR_SCAN_CONTEXT *context, YR_OBJECT *module_object, void *module_data, size_t module_data_size)
 {
-    // Track this scan buffer space:
-    // This will be called on every new scan with a rule set that has a 'import "area"' in it.
-    // TODO: For the Yara4Ida project we scan per memory segment only, thus have only a single buffer at a time.
-    //  For the general Yara use case we'd probably want to track the YR_MEMORY_BLOCK, and our 'scan' 
-    //  function would need to figure out what block it's in based on the @find offset, etc.
-    YR_MEMORY_BLOCK *block = first_memory_block(context);
-    scan_data = block->fetch_data(block);
-    scan_size = block->size;
-
     return ERROR_SUCCESS;
 }
 
 int module_unload(YR_OBJECT *module_object)
 {
-    scan_data = NULL;
-    scan_size = 0;
-
     return ERROR_SUCCESS;
 }
