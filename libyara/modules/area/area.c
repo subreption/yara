@@ -4,6 +4,9 @@
 // To update this code in a libyara build, touch "modules.c"
 // TODO: Developed in Windows only but with other OSes in mind
 //       but not tested for libyara multi-platform computability.
+
+#include <yara/mem.h>  // Must be here, else strange prototpye problems with 'yr_calloc'
+#include <yara/utils.h>
 #include <yara/modules.h>
 
 #define MODULE_NAME area
@@ -99,12 +102,10 @@ define_function(scan)
        
         if (!value_count || (scan_range < (value_size * value_count)))
             return_integer_error(ERROR_INVALID_ARGUMENT);
-
+        
         // Matching addresses tracking array 
-        uint64_t match_count = 1;        
-        #pragma warning(disable:4312) /* For erroneous: "warning C4312: 'type cast': conversion from 'int' to 'uint64_t *' of greater size" */
-        matches = (uint64_t *) yr_calloc((size_t) value_count, (size_t) sizeof(uint64_t));
-        #pragma warning(default:4312)
+        uint64_t match_count = 1;       
+        matches = (uint64_t *) yr_calloc((size_t) value_count, (size_t) sizeof(uint64_t));       
         if (!matches)
             return_integer_error(ERROR_INSUFFICIENT_MEMORY);
 
@@ -205,7 +206,7 @@ define_function(scan)
     #ifdef _WIN32
 	__except (TRUE) 
     {
-        //trace("** scan() exception! **\n");
+        //trace("** libyara area module scan() exception! **\n");
 		yr_free(matches);
 		matches = NULL;
 		return_integer_error(ERROR_INTERNAL_FATAL_ERROR);

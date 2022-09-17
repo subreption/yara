@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <string.h>
 #include <windows.h>
 
-static HANDLE hHeap;
+static HANDLE hHeap = NULL;
 
 int yr_heap_alloc(void)
 {
