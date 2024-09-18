@@ -14,7 +14,7 @@ jobs:
           - "--enable-debug --enable-cuckoo --enable-magic --enable-macho --enable-pb-tests --enable-address-sanitizer --enable-undefined-behaviour-sanitizer"
           - "--enable-debug --enable-profiling --enable-cuckoo --enable-magic --enable-macho --enable-pb-tests --enable-address-sanitizer --enable-undefined-behaviour-sanitizer"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -53,7 +53,7 @@ jobs:
           - "--host=x86_64-w64-mingw32"
           - "--host=i686-w64-mingw32"
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -73,7 +73,7 @@ jobs:
   macosx-build:
     runs-on: macos-13
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Install dependencies
         run: |
           brew install \
@@ -119,7 +119,7 @@ jobs:
           key: ${{ runner.os }}-${{ env.cache-name }}-${{ github.ref }}
           restore-keys: |
             ${{ runner.os }}-${{ env.cache-name }}-development
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Build
         run: bazel build @jansson//... //tests/...
       - name: Run tests
@@ -128,7 +128,7 @@ jobs:
   bigendian:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
       - name: Setup multiarch/qemu-user-static
         run: |
           docker run --rm --privileged multiarch/qemu-user-static:register --reset
