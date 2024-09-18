@@ -142,7 +142,7 @@ endif
 #
 
 if AREA_MODULE
-MODULES += modules/area/area.c
+MODULES += libyara/modules/area/area.c
 endif
 
 include_HEADERS = libyara/include/yara.h

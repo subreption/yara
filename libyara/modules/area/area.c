@@ -21,7 +21,7 @@
     return (int) _error;                                                   \
   }
 
-// Output formated text to debugger channel
+// Output formatted text to debugger channel
 #if 0
 void trace(const char *format, ...)
 {
@@ -74,15 +74,14 @@ If match found, the area module will scan from the match address minus 640 bytes
 plus 640 bytes for the four reminding four 32bit values (passed in as the hex string).
 */
 define_function(scan)
-{    
+{
     uint64_t *matches = NULL;
 
     // Get current scan buffer
     YR_MEMORY_BLOCK *block = first_memory_block(__context);
     const uint8_t *scan_data = block->fetch_data(block);
-    size_t scan_size = block->size;    
-    //trace("scan(%04X): 0x%llX, %u\n", GetCurrentThreadId(), (UINT64) scan_data, scan_size);
-   
+    size_t scan_size = block->size;
+
     #ifdef _WIN32
 	__try
     #endif
@@ -92,6 +91,7 @@ define_function(scan)
         uint64_t value_count  = integer_argument(3);
         uint64_t scan_range   = integer_argument(4);
         char *hex_data = string_argument(5);
+
         if (!hex_data)
             return_integer_error(ERROR_INVALID_ARGUMENT);
 
@@ -99,13 +99,13 @@ define_function(scan)
         size_t value_size = (value_bits / 8);
         if (!((value_size == (32 / 8)) || (value_size == (64 / 8))))
             return_integer_error(ERROR_INVALID_ARGUMENT);
-       
+
         if (!value_count || (scan_range < (value_size * value_count)))
             return_integer_error(ERROR_INVALID_ARGUMENT);
-        
-        // Matching addresses tracking array 
-        uint64_t match_count = 1;       
-        matches = (uint64_t *) yr_calloc((size_t) value_count, (size_t) sizeof(uint64_t));       
+
+        // Matching addresses tracking array
+        uint64_t match_count = 1;
+        matches = (uint64_t *) yr_calloc((size_t) value_count, (size_t) sizeof(uint64_t));
         if (!matches)
             return_integer_error(ERROR_INSUFFICIENT_MEMORY);
 
@@ -113,8 +113,8 @@ define_function(scan)
         matches[0] = ((uint64_t) scan_data + first_offset);
 
         // =======================================================================
-        // Simple by vale byte scanning. 
-        // Could be faster but adequate since the scan range is small for the normative case, 
+        // Simple by vale byte scanning.
+        // Could be faster but adequate since the scan range is small for the normative case,
         // plus the count of area scans are typically small (5% of the total rules) also.
         size_t start_offset;
         if (first_offset < scan_range)
@@ -123,7 +123,7 @@ define_function(scan)
             start_offset = (first_offset - scan_range);
 
         size_t end_offset = (first_offset + scan_range);
-        size_t scan_size_adj = (scan_size - value_size);        
+        size_t scan_size_adj = (scan_size - value_size);
         if (end_offset > scan_size_adj)
             end_offset = scan_size_adj;
 
@@ -135,13 +135,13 @@ define_function(scan)
         }
 
         if (value_bits == 32)
-        {           
+        {
             // Iterate through the input value set
             uint32_t *values = (uint32_t*) hex_data;
             size_t count = value_count;
             for (size_t i = 0; i < count; i++)
             {
-                uint32_t value = *values++;                
+                uint32_t value = *values++;
                 uint8_t *data = (scan_data + start_offset);
 
                 // Iterate though the scan range by bytes
@@ -159,7 +159,7 @@ define_function(scan)
                                 goto continue_scan;
                         }
 
-                        // Got a match for this value                      
+                        // Got a match for this value
                         matches[match_count++] = match_addr;
                         break;
                     }
@@ -170,26 +170,26 @@ define_function(scan)
         }
         else
         // 64bit value version
-        {            
-            uint64_t *values = (uint64_t *) hex_data;            
+        {
+            uint64_t *values = (uint64_t *) hex_data;
             size_t count = value_count;
             for (size_t i = 0; i < count; i++)
             {
                 uint64_t value = *values++;
                 uint8_t *data = (scan_data + start_offset);
-               
+
                 for (size_t j = 0; j < scan_length; j++, data++)
                 {
                     uint64_t test = *((uint64_t*) data);
                     if(test == value)
-                    {                        
+                    {
                         uint64_t match_addr = (uint64_t) data;
                         for (size_t k = 0; k < match_count; k++)
                         {
                             if (matches[k] == match_addr)
                                 goto continue_scan2;
                         }
-                       
+
                         matches[match_count++] = match_addr;
                         break;
                     }
@@ -200,11 +200,11 @@ define_function(scan)
         }
 
 		yr_free(matches);
-        matches = NULL;      
+        matches = NULL;
 		return_integer(match_count >= value_count);
 	}
     #ifdef _WIN32
-	__except (TRUE) 
+	__except (TRUE)
     {
         //trace("** libyara area module scan() exception! **\n");
 		yr_free(matches);

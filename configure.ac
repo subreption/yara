@@ -192,6 +192,13 @@ AC_ARG_ENABLE([debug-dex],
     CFLAGS="$CFLAGS -DDEBUG_DEX_MODULE"
   fi])
 
+AC_ARG_ENABLE([area],
+  [AS_HELP_STRING([--enable-area], [enable area module])],
+  [if test x$enableval = xyes; then
+    build_area_module=true
+    CFLAGS="$CFLAGS -DAREA_MODULE"
+  fi])
+
 AC_ARG_ENABLE([pb-tests],
   [AS_HELP_STRING([--enable-pb-tests], [enable protobuf test module])],
   [if test x$enableval = xyes; then
@@ -368,6 +375,7 @@ AM_CONDITIONAL([MACHO_MODULE], [test x$build_macho_module = xtrue])
 AM_CONDITIONAL([PB_TESTS_MODULE], [test x$build_pb_tests_module = xtrue])
 AM_CONDITIONAL([DEX_MODULE], [test x$build_dex_module = xtrue])
 AM_CONDITIONAL([DEBUG_DEX_MODULE], [test x$debug_dex_module = xtrue])
+AM_CONDITIONAL([AREA_MODULE], [test x$build_area_module = xtrue])
 
 AM_CONDITIONAL([USE_WINDOWS_PROC], [test x$proc_interface = xwindows ])
 AM_CONDITIONAL([USE_LINUX_PROC], [test x$proc_interface = xlinux ])
