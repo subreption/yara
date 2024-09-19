@@ -40,9 +40,11 @@ YARA is multi-platform, running on Windows, Linux and Mac OS X, and can be used
 through its command-line interface or from your own Python scripts with the
 yara-python extension.
 
-##### KW: Modified for https://github.com/kweatherman/yara4ida
+### Modifications
 
-##### See "KW_MODIFICATIONS.md" for list of changes.
+This fork includes the following modifications:
+
+ - `area` module by Kevin Weatherman (originally for https://github.com/kweatherman/yara4ida), adding support for 32-bit and 64-bit "localized" matching, useful for cryptographic constants, lookup tables, etc.
 
 ## Additional resources
 
